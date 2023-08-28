@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// The ActionUI is the front-end UI which take an ACtion and shows it to the player.
+// The ActionUI is the front-end UI which take an Action and shows it to the player.
 public class ActionUI : MonoBehaviour
 {
     // Receive an Action object

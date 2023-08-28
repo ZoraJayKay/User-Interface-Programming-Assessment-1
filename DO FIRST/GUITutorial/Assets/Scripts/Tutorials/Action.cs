@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// A class for a single type of action
 public class Action : MonoBehaviour
 {
     public string actionName;
     public string description;
 
-    // Sprite is a Unity object type
+    // An image for use in the UI
     public Sprite icon;
 
-    // Color is a Unity object type
+    // A colour for differentiating the Sprite
     public Color colour = Color.white;
 }
