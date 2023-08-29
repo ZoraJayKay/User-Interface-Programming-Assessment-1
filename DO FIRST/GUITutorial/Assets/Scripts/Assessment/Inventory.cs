@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Inventory : MonoBehaviour
 {
+    // An event to detect additions or removals to the Inventory
+    public UnityEvent onChanged;
+
     // An array of all the ShopItems in this Inventory (empty on instantiation)
     ShopItem[] _shopItems = null;
 

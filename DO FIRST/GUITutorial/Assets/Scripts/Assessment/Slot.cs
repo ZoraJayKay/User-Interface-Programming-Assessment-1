@@ -13,8 +13,6 @@ public class Slot : MonoBehaviour
     {
         // Store a reference to the ShopItemUI that's passed in (because it is the one for this Slot)
         shopItemUI = _shopItemUI;
-
-        
     }
 
 

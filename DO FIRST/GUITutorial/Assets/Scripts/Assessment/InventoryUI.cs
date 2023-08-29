@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -14,33 +15,92 @@ public class InventoryUI : MonoBehaviour
     Slot[] slots;
     // 4: The base ShopItemUI prefab we want to use for this InventoryUI.
     public ShopItemUI shopItemUIPrefab;
+    // 5: Variables for the components of this InventoryUI
+    LayoutGroup layoutGroup;
+    ContentSizeFitter contentSizeFitter;
 
-    
-
+    // Initialise the InventoryUI
     private void Start()
     {
-        // 1: Cache the size of the inventory which we'll be displaying.
+        //// 1: Cache the size of the inventory which we'll be displaying.
+        //int inventorySize = inventory.shopItems.Length;
+
+        //// 2: Create a Slot in our array for each ShopItem in the passed-in Inventory.
+        //slots = new Slot[inventorySize];
+
+        //// 3: Initialise the array of Slots.
+        //// 3.1: Iterate through the Slots...
+        //for (int i = 0; i < inventorySize; i++)
+        //{
+        //    // 3.1a: For each Slot, create a Slot prefab according to the transform rules of the InventoryUI.
+        //    slots[i] = Instantiate(slotPrefab, transform);
+
+        //    // 3.1b: For each Slot, create a ShopItemUI prefab as the Slot's own child
+        //    slots[i].shopItemUI = Instantiate(shopItemUIPrefab, slots[i].transform);
+
+        //    // 3.1c: Assign the Slot's ShopItemUI with the particulars of its ShopItem
+        //    slots[i].shopItemUI.SetItem(inventory.shopItems[i]);
+
+        //    // 3.1d: Initialise the Slot with the particulars of the ShopItemUI
+        //    slots[i].Init(this, i, slots[i].shopItemUI);
+        //    // ++++++++ Haven't I already done this with the 3 previous expressions? ++++++++
+        //}
+
+        // 4: Set the variables for the components
+        layoutGroup = GetComponent<LayoutGroup>();
+        contentSizeFitter = GetComponent<ContentSizeFitter>();
+
+        // 5: Update once on startup
+        StartCoroutine(UpdateUI());
+
+        // 6: Subscribe the Inventory of this InventoryUI to the event that will notify the UI of changes to the underlying Inventory
+        inventory.onChanged.AddListener(() => { StartCoroutine(UpdateUI()); });
+    }
+
+    // Update the InventoryUI, returning an iterator over the Inventory of this InventoryUI
+    IEnumerator UpdateUI()
+    {
+        // 1: Turn on the components
+        contentSizeFitter.enabled = true;
+        layoutGroup.enabled = true;
+
+        // 2: Wait until the end of the frame and then continue
+        yield return new WaitForEndOfFrame();
+
+        // 3: Cache the size of the inventory which we'll be displaying.
         int inventorySize = inventory.shopItems.Length;
 
-        // 2: Create a Slot in our array for each ShopItem in the passed-in Inventory.
-        slots = new Slot[inventorySize];
+        // 4: Create a Slot in our array for each ShopItem in the passed-in Inventory.
+        //slots = new Slot[inventorySize];
+        slots = new Slot[16];
 
-        // 3: Initialise the array of Slots.
-        // 3.1: Iterate through the Slots...
-        for (int i = 0; i < inventorySize; i++)
+        // 5: Initialise the array of Slots.
+        // 5.1: Iterate through the Slots...
+        for (int i = 0; i < slots.Length; i++)
         {
-            // 3.1a: For each Slot, create a Slot prefab according to the transform rules of the InventoryUI.
+            // 5.1a: For each Slot, create a Slot prefab according to the transform rules of the InventoryUI.
             slots[i] = Instantiate(slotPrefab, transform);
 
-            // 3.1b: For each Slot, create a ShopItemUI prefab as the Slot's own child
+            // 5.1b: For each Slot, create a ShopItemUI prefab as the Slot's own child
             slots[i].shopItemUI = Instantiate(shopItemUIPrefab, slots[i].transform);
 
-            // 3.1c: Assign the Slot's ShopItemUI with the particulars of its ShopItem
-            slots[i].shopItemUI.SetItem(inventory.shopItems[i]);
+            if (i < inventory.shopItems.Length)
+            {
+                // 5.1c: Assign the Slot's ShopItemUI with the particulars of its ShopItem
+                slots[i].shopItemUI.SetItem(inventory.shopItems[i]);
 
-            // 3.1d: Initialise the Slot with the particulars of the ShopItemUI
-            slots[i].Init(this, i, slots[i].shopItemUI);
-            // ++++++++ Haven't I already done this with the 3 previous expressions? ++++++++
+                // 5.1d: Initialise the Slot with the particulars of the ShopItemUI
+                slots[i].Init(this, i, slots[i].shopItemUI);
+                // ++++++++ Haven't I already done this with the 3 previous expressions? ++++++++
+            }
         }
+
+        // 6: Wait appropriate frames (yield return only returns those items required / calculated by a function, so that function will exit early if it would otherwise calculate more than needed).
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        // 7: Turn off the content size fitter component and layout group component
+        contentSizeFitter.enabled = false;
+        layoutGroup.enabled = false;
     }
 }

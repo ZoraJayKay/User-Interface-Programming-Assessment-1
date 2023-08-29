@@ -64,6 +64,8 @@ public class ShopItemUI : MonoBehaviour
         // Set the other constraints
         _itemTypeTag.SetText(_thisItemType.ToString());
         _classTypeTag.SetText("Class: " + _thisItemClass.ToString());
+
+         //_parent = item.Parent;
     }
 
     // Assign the ShopItemUI an item type according to its ShopItem
