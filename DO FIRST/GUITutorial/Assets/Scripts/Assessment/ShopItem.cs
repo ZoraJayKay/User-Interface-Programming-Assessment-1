@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using TMPro;
 using UnityEngine;
 
@@ -25,6 +26,18 @@ public class ShopItem : MonoBehaviour
 
     public enum classRequired { Warrior, Mage, Cleric };
     public classRequired thisItemClass;
+
+    // 5: Item presets based on itemType
+    //public enum weaponItems { ShortSword, Flail, Pike };
+    //public enum armourItems { Clothes, LeatherArmour, PlateArmour };
+    //public enum consumableItems { Potion, Food, Poison };
+
+    //public armourItems armourChosen;
+    //public consumableItems consumableChosen;
+    //public weaponItems weaponChosen;
+
+    // 6: This item's parent's Transform
+    public Transform parentTransform;
 
     // A function for the ShopItemUI to invoke to return the ShopItem's item type
     public int GetItemType()
@@ -85,5 +98,40 @@ public class ShopItem : MonoBehaviour
 
         // Send the integer representation of the class back to the ShopItemUI
         return _classRequired;
+    }
+
+    public void SwapWith(ref ShopItem shopItem)
+    {
+        ShopItem temp = new ShopItem();
+
+        temp.icon = shopItem.icon;
+        temp.colour = shopItem.colour;
+        temp.itemName = shopItem.itemName;
+        temp.itemDescription = shopItem.itemDescription;
+        temp.itemPrice = shopItem.itemPrice;
+        temp.itemWeight = shopItem.itemWeight;
+        temp.thisItemType = shopItem.thisItemType;
+        temp.thisItemClass = shopItem.thisItemClass;
+        temp.parentTransform = shopItem.parentTransform;
+
+        shopItem.icon = this.icon;
+        shopItem.colour = this.colour;
+        shopItem.itemName = this.itemName;
+        shopItem.itemDescription = this.itemDescription;
+        shopItem.itemPrice = this.itemPrice;
+        shopItem.itemWeight = this.itemWeight;
+        shopItem.thisItemType = this.thisItemType;
+        shopItem.thisItemClass = this.thisItemClass;
+        shopItem.parentTransform = this.parentTransform;
+
+        this.icon = temp.icon;
+        this.colour = temp.colour;
+        this.itemName = temp.itemName;
+        this.itemDescription = temp.itemDescription;
+        this.itemPrice = temp.itemPrice;
+        this.itemWeight = temp.itemWeight;
+        this.thisItemType = temp.thisItemType;
+        this.thisItemClass = temp.thisItemClass;
+        this.parentTransform = temp.parentTransform;
     }
 }

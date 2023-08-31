@@ -6,27 +6,56 @@ using UnityEngine;
 public class Slot : MonoBehaviour
 {
     // The specific ShopItemUI object for this Slot
+    [HideInInspector]
     public ShopItemUI shopItemUI;
 
-    // A function for initialising the Slots of an InventoryUI with the particulars of its ShopItemUI; link up references between the Slot, the ShopItemUI, and the InventoryUI
+    //// A second ShopItemUI reference exclusively for the purposes of drag and drop item swapping
+    //[HideInInspector]
+    //public ShopItemUI tempItemUI;
+
+    [HideInInspector]
+    protected InventoryUI inventoryUI;
+    
+    [HideInInspector]
+    public int arrayIndex;
+
+    // A function for initialising the Slots of an InventoryUI with the particulars of its ShopItemUI; link up references between the Slot, the ShopItemUI, the InventoryUI, and the Slot's index in the array
     public void Init(InventoryUI invUI, int i, ShopItemUI _shopItemUI)
     {
         // Store a reference to the ShopItemUI that's passed in (because it is the one for this Slot)
         shopItemUI = _shopItemUI;
+        inventoryUI = invUI;
+        arrayIndex = i;
+        shopItemUI._slot = this;
     }
 
+    public void SetShopItemUI(ShopItemUI _shopItemUI) { 
+        shopItemUI = _shopItemUI;
+    }
 
+    public ShopItemUI GetShopItemUI()
+    {
+        return shopItemUI;
+    }
 
-    //// Add a lambda function to the Player's onClick button function
-    //public void Init(Player _player)
-    //{
-    //    // Store a reference to the button of this Action (Init is being called in a loop so this will get done for all of the Actions)
-    //    Button button = GetComponentInChildren<Button>();
+    public void UpdateItem(ShopItem item)
+    {
+        // Update the raw data in the inventory
+        inventoryUI.inventory.shopItems[arrayIndex] = item;
 
-    //    // The lambda function here creates a local unnamed function that gets called when the button is pressed, with a copy of the stack at the time it was set up.
-    //    if (button)
-    //    {
-    //        button.onClick.AddListener(() => { player.DoAction(action); });
-    //    }
-    //}
+        // Update the UI
+        shopItemUI.SetItem(item);
+    }
+
+    public Inventory GetInventory()
+    {
+        return inventoryUI.GetInventory();
+    }
+
+    public ShopItem GetShopItem(Slot slot, int index)
+    {
+        ShopItem temp = slot.GetComponentInParent<InventoryUI>().inventory.shopItems[index];
+
+        return temp;
+    }
 }
