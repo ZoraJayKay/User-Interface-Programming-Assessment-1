@@ -498,6 +498,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f2cc72cce6b53247a3d867909521730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _shopItem: {fileID: 0}
+  _slot: {fileID: 0}
   _icon: {fileID: 5799581404255937055}
   _itemName: {fileID: 1930658058320208002}
   _itemDescription: {fileID: 2848009069320097916}
@@ -576,7 +578,7 @@ MonoBehaviour:
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
-            m_BoolArgument: 1
+            m_BoolArgument: 0
           m_CallState: 2
   - eventID: 1
     callback:

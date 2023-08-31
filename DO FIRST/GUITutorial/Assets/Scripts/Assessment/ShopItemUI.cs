@@ -43,8 +43,8 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     classRequired _thisItemClass;
 
     // 6: The parent Transform and parent Canvas
-    Transform _parentTransform;
-    Canvas _canvas;
+    public Transform _parentTransform;
+    public Canvas _canvas;
 
     // 7: Drag and drop variables
     bool dragging = false;
@@ -106,37 +106,22 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
                 slotFound = s;
 
                 // Swap the underlying ShopItems of this ShopItemUI and the 
-                this.Swap(slotFound);
+                Swap(slotFound);
 
+                transform.SetParent(_parentTransform);
 
+                transform.localPosition = Vector3.zero;
+            }
 
+            else
+            {
+                transform.SetParent(_parentTransform);
 
-
-
-
-
-
-
-
-
-
-
-                //// Cache the position of the target Slot in its InventoryUI (which is the same as the position of its ShopItem in its Inventory)
-                //int i = slotFound.arrayIndex;
-
-                //// Get the back-end inventory of the target Slot (Slot > InventoryUI > Inventory > ShopItem)
-                //ShopItem foundShopItem = slotFound.GetShopItem(slotFound, i);
-
-                //// Cache the position of the ShopItemUI being dragged according to its Slot
-                //int thisIndex = GetIndex();
-
-                //// Get the back-end inventory of the ShopItemUI that is being dragged (ShopItemUI > Slot > InventoryUI > Inventory > ShopItem)
-                //ShopItem thisShopItem = this.GetShopItem(this, thisIndex);
-
-                //// Swap the items around in the back-end data (swap their ShopItems)
-                //foundShopItem.SwapWith(ref thisShopItem);
+                transform.localPosition = Vector3.zero;
             }
         }
+
+        dragging = false;
     }
 
 
@@ -173,11 +158,8 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         // Set the other constraints
         _itemTypeTag.SetText(_thisItemType.ToString());
         _classTypeTag.SetText("Class: " + _thisItemClass.ToString());
-
-        // Make the parent Transform of the ShopItemUI that called this function the parent Transform of this ShopItemUI
-        _parentTransform = item.parentTransform;
         
-        //gameObject.SetActive(item != null);
+        gameObject.SetActive(item != null);
     }
 
     // Assign the ShopItemUI an item type according to its ShopItem
@@ -212,18 +194,6 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
                 _thisItemClass = ShopItemUI.classRequired.Cleric;
                 break;
         }
-    }
-
-    public ShopItem GetShopItem(ShopItemUI shopItemUI, int index)
-    {
-        ShopItem temp = shopItemUI.GetComponentInParent<InventoryUI>().GetInventory().shopItems[index];
-        return temp;
-    }    
-
-    public int GetIndex()
-    {
-        int i = GetComponentInParent<Slot>().arrayIndex;
-        return i;
     }
 
     protected void Swap(Slot newParent)

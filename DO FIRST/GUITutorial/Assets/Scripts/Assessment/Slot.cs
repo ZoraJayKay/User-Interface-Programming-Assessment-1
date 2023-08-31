@@ -10,11 +10,11 @@ public class Slot : MonoBehaviour
     public ShopItemUI shopItemUI;
 
     //// A second ShopItemUI reference exclusively for the purposes of drag and drop item swapping
-    //[HideInInspector]
-    //public ShopItemUI tempItemUI;
+    [HideInInspector]
+    public ShopItemUI tempItemUI;
 
     [HideInInspector]
-    protected InventoryUI inventoryUI;
+    public InventoryUI inventoryUI;
     
     [HideInInspector]
     public int arrayIndex;
@@ -44,7 +44,7 @@ public class Slot : MonoBehaviour
         inventoryUI.inventory.shopItems[arrayIndex] = item;
 
         // Update the UI
-        shopItemUI.SetItem(item);
+        tempItemUI.SetItem(item);
     }
 
     public Inventory GetInventory()
@@ -52,10 +52,10 @@ public class Slot : MonoBehaviour
         return inventoryUI.GetInventory();
     }
 
-    public ShopItem GetShopItem(Slot slot, int index)
-    {
-        ShopItem temp = slot.GetComponentInParent<InventoryUI>().inventory.shopItems[index];
+    //public ShopItem GetShopItem(Slot slot, int index)
+    //{
+    //    ShopItem temp = slot.GetComponentInParent<InventoryUI>().inventory.shopItems[index];
 
-        return temp;
-    }
+    //    return temp;
+    //}
 }
