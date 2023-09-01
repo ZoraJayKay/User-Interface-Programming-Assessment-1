@@ -27,6 +27,7 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     // 3: Text strings
     public TextMeshProUGUI _itemName;
     public TextMeshProUGUI _itemDescription;
+    public TextMeshProUGUI _indexNo;
 
     // 4: Requirements   
     public TextMeshProUGUI _itemPrice;
@@ -66,8 +67,6 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         // To make sure that the dragged object appears above all others, make this ShopItemUI the child of the Canvas for the duration of the drag
         transform.SetParent(_canvas.transform, true);
         transform.SetAsLastSibling();
-
-
 
         // Set dragging indicator to true
         dragging = true;
@@ -112,16 +111,17 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
                 transform.SetParent(_originalParent);
                 transform.localPosition = Vector3.zero;
+                Debug.Log("position: " + transform.localPosition);
             }
 
-            else if (!s)
-            {
-                Debug.Log("NO SLOT FOUND UNDER THE MOUSE");
+            //else if (!s)
+            //{
+            //    Debug.Log("NO SLOT FOUND UNDER THE MOUSE");
 
-                //transform.SetParent(_originalParent);
+            //    //transform.SetParent(_originalParent);
 
-                //transform.localPosition = Vector3.zero;
-            }
+            //    //transform.localPosition = Vector3.zero;
+            //}
         }
 
         dragging = false;
@@ -139,7 +139,6 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
             // Bring in the sprite and its colour if they exist
             if (_icon)
             {
-
                 _icon.sprite = _shopItem.icon;
                 _icon.color = _shopItem.colour;
             }
@@ -153,7 +152,8 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
             if (_itemDescription)
             {
                 _itemDescription.SetText(_shopItem.itemDescription.ToString());
-            }
+            }   
+            
 
             SetItemType(_shopItem.GetItemType());
             SetClassType(_shopItem.GetClassRequired());
@@ -209,15 +209,21 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
     protected void Swap(Slot newParent)
     {
-        ShopItemUI other = newParent.shopItemUI as ShopItemUI;
+        ShopItemUI otherUI = newParent.shopItemUI as ShopItemUI;
 
-        if (other)
+        Debug.Log("Swap started");
+
+        if (otherUI)
         {
-            ShopItem ours = _shopItem;
-            ShopItem theirs = other._shopItem;
+            Debug.Log("If was true");
 
-            _slot.UpdateItem(theirs);
-            other._slot.UpdateItem(ours);
+            ShopItem ourItem = _shopItem;
+            ShopItem theirItem = otherUI._shopItem;
+
+
+
+            _slot.UpdateItem(theirItem);
+            otherUI._slot.UpdateItem(ourItem);
         }
     }
 }

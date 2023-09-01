@@ -64,20 +64,6 @@ public class InventoryUI : MonoBehaviour
 
             // 5.1d: Initialise the Slot with the particulars of the ShopItemUI
             slots[i].Init(this, i, slots[i].shopItemUI);
-
-            //if (inventory.shopItems[i] != null)
-            //{
-            //    // 5.1c: Assign the Slot's ShopItemUI with the particulars of its ShopItem
-            //    slots[i].shopItemUI.SetItem(inventory.shopItems[i]);
-
-            //    // 5.1d: Initialise the Slot with the particulars of the ShopItemUI
-            //    slots[i].Init(this, i, slots[i].shopItemUI);
-            //}
-
-            //else
-            //{
-
-            //}
         }
 
         // 6: Wait appropriate frames (yield return only returns those items required / calculated by a function, so that function will exit early if it would otherwise calculate more than needed).
@@ -89,8 +75,8 @@ public class InventoryUI : MonoBehaviour
         layoutGroup.enabled = false;
     }
 
-    public Inventory GetInventory()
-    {
-        return inventory;
-    }
+    //public Inventory GetInventory()
+    //{
+    //    return inventory;
+    //}
 }
