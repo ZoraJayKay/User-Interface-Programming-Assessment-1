@@ -5,7 +5,8 @@ using TMPro;
 using UnityEngine;
 
 // A scriptable object back-end class that specifies the particulars for each item
-public class ShopItem : MonoBehaviour
+[CreateAssetMenu(fileName = "ShopItem", menuName = "GUI/ShopItem", order = 1)]
+public class ShopItem : ScriptableObject
 {
     // +++ Public variables for setting in Unity +++
     // 1: An image for use by this object's ShopItemUI
@@ -16,6 +17,7 @@ public class ShopItem : MonoBehaviour
 
     // 3: Text strings and constraints
     public string itemName;
+    [Multiline(3)]
     public string itemDescription;
     public float itemPrice;
     public float itemWeight;
@@ -24,10 +26,10 @@ public class ShopItem : MonoBehaviour
     public enum itemType { Weapon, Armour, Consumable };
     public itemType thisItemType;
 
-    public enum classRequired { Warrior, Mage, Cleric };
+    public enum classRequired { Warrior, Mage, Cleric, All};
     public classRequired thisItemClass;
 
-    // 5: Item presets based on itemType
+    // 5: Item presets based on itemType  
     //public enum weaponItems { ShortSword, Flail, Pike };
     //public enum armourItems { Clothes, LeatherArmour, PlateArmour };
     //public enum consumableItems { Potion, Food, Poison };
@@ -35,9 +37,6 @@ public class ShopItem : MonoBehaviour
     //public armourItems armourChosen;
     //public consumableItems consumableChosen;
     //public weaponItems weaponChosen;
-
-    // 6: This item's parent's Transform
-    public Transform parentTransform;
 
     // A function for the ShopItemUI to invoke to return the ShopItem's item type
     public int GetItemType()
@@ -90,48 +89,17 @@ public class ShopItem : MonoBehaviour
                 _classRequired = 3;
                 break;
 
+            case classRequired.All:
+                _classRequired = 4;
+                break;
+
             // Assume an object is for a Warrior if not specified (this shouldn't ever be needed but just in case)
             default:
-                _classRequired = 1;
+                _classRequired = 4;
                 break;
         }
 
         // Send the integer representation of the class back to the ShopItemUI
         return _classRequired;
-    }
-
-    public void SwapWith(ref ShopItem shopItem)
-    {
-        ShopItem temp = new ShopItem();
-
-        temp.icon = shopItem.icon;
-        temp.colour = shopItem.colour;
-        temp.itemName = shopItem.itemName;
-        temp.itemDescription = shopItem.itemDescription;
-        temp.itemPrice = shopItem.itemPrice;
-        temp.itemWeight = shopItem.itemWeight;
-        temp.thisItemType = shopItem.thisItemType;
-        temp.thisItemClass = shopItem.thisItemClass;
-        temp.parentTransform = shopItem.parentTransform;
-
-        shopItem.icon = this.icon;
-        shopItem.colour = this.colour;
-        shopItem.itemName = this.itemName;
-        shopItem.itemDescription = this.itemDescription;
-        shopItem.itemPrice = this.itemPrice;
-        shopItem.itemWeight = this.itemWeight;
-        shopItem.thisItemType = this.thisItemType;
-        shopItem.thisItemClass = this.thisItemClass;
-        shopItem.parentTransform = this.parentTransform;
-
-        this.icon = temp.icon;
-        this.colour = temp.colour;
-        this.itemName = temp.itemName;
-        this.itemDescription = temp.itemDescription;
-        this.itemPrice = temp.itemPrice;
-        this.itemWeight = temp.itemWeight;
-        this.thisItemType = temp.thisItemType;
-        this.thisItemClass = temp.thisItemClass;
-        this.parentTransform = temp.parentTransform;
     }
 }

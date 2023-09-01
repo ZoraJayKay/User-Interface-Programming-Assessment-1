@@ -18,9 +18,6 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     public ShopItem _shopItem;
     public Slot _slot;
 
-    public enum itemType { Weapon, Armour, Consumable };
-    public enum classRequired { Warrior, Mage, Cleric };
-
     // Create a header in the public component viewer 
     [Header("Child Components")]
     // +++ Public variables for setting in Unity +++
@@ -39,11 +36,12 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     public TextMeshProUGUI _itemTypeTag;
     public TextMeshProUGUI _classTypeTag;
 
-    itemType _thisItemType;    
-    classRequired _thisItemClass;
+    ShopItem.itemType _thisItemType;    
+    ShopItem.classRequired _thisItemClass;
 
     // 6: The parent Transform and parent Canvas
-    public Transform _parentTransform;
+    [Header("Parent Components")]
+    public Transform _originalParent;
     public Canvas _canvas;
 
     // 7: Drag and drop variables
@@ -56,8 +54,8 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     public void OnBeginDrag(PointerEventData eventData)
     {
         // Cache the original Parent's Transform
-        if (_parentTransform == null){
-            _parentTransform = transform.parent;
+        if (_originalParent == null){
+            _originalParent = transform.parent;
         }
 
         // Find the overall parent Canvas
@@ -68,6 +66,8 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         // To make sure that the dragged object appears above all others, make this ShopItemUI the child of the Canvas for the duration of the drag
         transform.SetParent(_canvas.transform, true);
         transform.SetAsLastSibling();
+
+
 
         // Set dragging indicator to true
         dragging = true;
@@ -83,7 +83,7 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         }
     }
 
-    // 3: On mouse button up, see if there’s a Slot under the mouse using EventSystem.RaycastAll.
+    // 3: On mouse button up, see if thereï¿½s a Slot under the mouse using EventSystem.RaycastAll.
     // Make a list of the results from checking under the cursor
     List<RaycastResult> hits = new List<RaycastResult>();
 
@@ -102,22 +102,25 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
             Slot s = hit.gameObject.GetComponent<Slot>();
             if (s)
             {
+                // FROM TUTE AND EXAMPLE    
                 // If yes, keep a reference to that Slot that was under the mouse
                 slotFound = s;
+                Debug.Log("FOUND A SLOT UNDER THE MOUSE");
 
                 // Swap the underlying ShopItems of this ShopItemUI and the 
                 Swap(slotFound);
 
-                transform.SetParent(_parentTransform);
-
+                transform.SetParent(_originalParent);
                 transform.localPosition = Vector3.zero;
             }
 
-            else
+            else if (!s)
             {
-                transform.SetParent(_parentTransform);
+                Debug.Log("NO SLOT FOUND UNDER THE MOUSE");
 
-                transform.localPosition = Vector3.zero;
+                //transform.SetParent(_originalParent);
+
+                //transform.localPosition = Vector3.zero;
             }
         }
 
@@ -126,40 +129,45 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
 
     // A function for assigning a ShopItemUI with the particulars of a ShopItem
-    public void SetItem(ShopItem item)
+    public void SetItem(ShopItem i)
     {
         // Give this ShopItemUI a reference to its ShopItem 
-        _shopItem = item;
+        _shopItem = i;
 
-        // Bring in the sprite and its colour if they exist
-        if (_icon) {
-            _icon.sprite = item.icon;
-            _icon.color = item.colour;
-        }
-
-        // Bring in the strings if they exist
-        if (_itemName)
+        if (_shopItem)
         {
-            _itemName.SetText(item.itemName.ToString());
+            // Bring in the sprite and its colour if they exist
+            if (_icon)
+            {
+
+                _icon.sprite = _shopItem.icon;
+                _icon.color = _shopItem.colour;
+            }
+
+            // Bring in the strings if they exist
+            if (_itemName)
+            {
+                _itemName.SetText(_shopItem.itemName.ToString());
+            }
+
+            if (_itemDescription)
+            {
+                _itemDescription.SetText(_shopItem.itemDescription.ToString());
+            }
+
+            SetItemType(_shopItem.GetItemType());
+            SetClassType(_shopItem.GetClassRequired());
+
+            // Set the constraints
+            _itemPrice.SetText("Price: " + _shopItem.itemPrice.ToString());
+            _itemWeight.SetText("Weight: " + _shopItem.itemWeight.ToString());
+
+            // Set the other constraints
+            _itemTypeTag.SetText(_thisItemType.ToString());
+            _classTypeTag.SetText("Class: " + _thisItemClass.ToString());
         }
-
-        if (_itemDescription)
-        {
-            _itemDescription.SetText(item.itemDescription.ToString());
-        }
-
-        SetItemType(item.GetItemType());
-        SetClassType(item.GetClassRequired());
-
-        // Set the constraints
-        _itemPrice.SetText("Price: " + item.itemPrice.ToString());
-        _itemWeight.SetText("Weight: " + item.itemWeight.ToString());
-
-        // Set the other constraints
-        _itemTypeTag.SetText(_thisItemType.ToString());
-        _classTypeTag.SetText("Class: " + _thisItemClass.ToString());
         
-        gameObject.SetActive(item != null);
+        gameObject.SetActive(_shopItem != null);
     }
 
     // Assign the ShopItemUI an item type according to its ShopItem
@@ -168,13 +176,13 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         switch(itemType)
         {
             case 1: 
-                _thisItemType = ShopItemUI.itemType.Weapon; 
+                _thisItemType = ShopItem.itemType.Weapon; 
                 break;
             case 2:
-                _thisItemType = ShopItemUI.itemType.Armour;
+                _thisItemType = ShopItem.itemType.Armour;
                 break;
             case 3:
-                _thisItemType = ShopItemUI.itemType.Consumable;
+                _thisItemType = ShopItem.itemType.Consumable;
                 break;
         }
     }
@@ -185,20 +193,23 @@ public class ShopItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         switch (classRequired)
         {
             case 1:
-                _thisItemClass = ShopItemUI.classRequired.Warrior;
+                _thisItemClass = ShopItem.classRequired.Warrior;
                 break;
             case 2:
-                _thisItemClass = ShopItemUI.classRequired.Mage;
+                _thisItemClass = ShopItem.classRequired.Mage;
                 break;
             case 3:
-                _thisItemClass = ShopItemUI.classRequired.Cleric;
+                _thisItemClass = ShopItem.classRequired.Cleric;
+                break;
+            case 4:
+                _thisItemClass = ShopItem.classRequired.All;
                 break;
         }
     }
 
     protected void Swap(Slot newParent)
     {
-        ShopItemUI other = newParent.shopItemUI;
+        ShopItemUI other = newParent.shopItemUI as ShopItemUI;
 
         if (other)
         {

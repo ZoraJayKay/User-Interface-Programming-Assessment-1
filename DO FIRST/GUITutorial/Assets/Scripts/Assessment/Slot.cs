@@ -29,14 +29,14 @@ public class Slot : MonoBehaviour
         shopItemUI._slot = this;
     }
 
-    public void SetShopItemUI(ShopItemUI _shopItemUI) { 
-        shopItemUI = _shopItemUI;
-    }
+    //public void SetShopItemUI(ShopItemUI _shopItemUI) { 
+    //    shopItemUI = _shopItemUI;
+    //}
 
-    public ShopItemUI GetShopItemUI()
-    {
-        return shopItemUI;
-    }
+    //public ShopItemUI GetShopItemUI()
+    //{
+    //    return shopItemUI;
+    //}
 
     public void UpdateItem(ShopItem item)
     {
@@ -44,18 +44,11 @@ public class Slot : MonoBehaviour
         inventoryUI.inventory.shopItems[arrayIndex] = item;
 
         // Update the UI
-        tempItemUI.SetItem(item);
+        shopItemUI.SetItem(item);
     }
 
-    public Inventory GetInventory()
-    {
-        return inventoryUI.GetInventory();
-    }
-
-    //public ShopItem GetShopItem(Slot slot, int index)
+    //public Inventory GetInventory()
     //{
-    //    ShopItem temp = slot.GetComponentInParent<InventoryUI>().inventory.shopItems[index];
-
-    //    return temp;
+    //    return inventoryUI.GetInventory();
     //}
 }

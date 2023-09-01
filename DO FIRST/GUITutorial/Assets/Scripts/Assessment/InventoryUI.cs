@@ -30,7 +30,9 @@ public class InventoryUI : MonoBehaviour
         StartCoroutine(UpdateUI());
 
         // 3: Subscribe the Inventory of this InventoryUI to the event that will notify the UI of changes to the underlying Inventory
-        inventory.onChanged.AddListener(() => { StartCoroutine(UpdateUI()); });
+        //inventory.onChanged.AddListener(() => { StartCoroutine(UpdateUI()); });
+
+        StopCoroutine(UpdateUI());
     }
 
     // Update the InventoryUI, returning an iterator over the Inventory of this InventoryUI
@@ -43,16 +45,13 @@ public class InventoryUI : MonoBehaviour
         // 2: Wait until the end of the frame and then continue
         yield return new WaitForEndOfFrame();
 
-        // 3: Cache the size of the inventory which we'll be displaying.
-        int inventorySize = inventory.shopItems.Length;
-
         // 4: Create a Slot in our array for each ShopItem in the passed-in Inventory.
         //slots = new Slot[inventorySize];
-        slots = new Slot[16];
+        slots = new Slot[inventory.shopItems.Length];
 
         // 5: Initialise the array of Slots.
         // 5.1: Iterate through the Slots...
-        for (int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < inventory.shopItems.Length; i++)
         {
             // 5.1a: For each Slot, create a Slot prefab according to the transform rules of the InventoryUI.
             slots[i] = Instantiate(slotPrefab, transform);
@@ -60,15 +59,25 @@ public class InventoryUI : MonoBehaviour
             // 5.1b: For each Slot, create a ShopItemUI prefab as the Slot's own child
             slots[i].shopItemUI = Instantiate(shopItemUIPrefab, slots[i].transform);
 
-            if (i < inventory.shopItems.Length)
-            {
-                // 5.1c: Assign the Slot's ShopItemUI with the particulars of its ShopItem
-                slots[i].shopItemUI.SetItem(inventory.shopItems[i]);
+            // 5.1c: Assign the Slot's ShopItemUI with the particulars of its ShopItem
+            slots[i].shopItemUI.SetItem(inventory.shopItems[i]);
 
-                // 5.1d: Initialise the Slot with the particulars of the ShopItemUI
-                slots[i].Init(this, i, slots[i].GetShopItemUI());
-                // ++++++++ Haven't I already done this with the 3 previous expressions? ++++++++
-            }
+            // 5.1d: Initialise the Slot with the particulars of the ShopItemUI
+            slots[i].Init(this, i, slots[i].shopItemUI);
+
+            //if (inventory.shopItems[i] != null)
+            //{
+            //    // 5.1c: Assign the Slot's ShopItemUI with the particulars of its ShopItem
+            //    slots[i].shopItemUI.SetItem(inventory.shopItems[i]);
+
+            //    // 5.1d: Initialise the Slot with the particulars of the ShopItemUI
+            //    slots[i].Init(this, i, slots[i].shopItemUI);
+            //}
+
+            //else
+            //{
+
+            //}
         }
 
         // 6: Wait appropriate frames (yield return only returns those items required / calculated by a function, so that function will exit early if it would otherwise calculate more than needed).
